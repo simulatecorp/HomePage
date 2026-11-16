@@ -673,20 +673,22 @@ footer{padding:40px 52px;border-top:1px solid var(--border);background:#fff}
   }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-  // Zoom scroll effect - text content only, dark bg stays fixed
+   // Zoom scroll effect - reaches full size when the element is centered
   const zoomTargets = [
     document.querySelector('.statement-content'),
-    document.querySelector('.des-cta-strip h3'),
+    ...document.querySelectorAll('.des-cta-strip h3'),
     document.querySelector('.stats-inner'),
   ].filter(Boolean);
 
   function handleZoomScroll() {
+    const vh = window.innerHeight;
     zoomTargets.forEach(el => {
       const rect = el.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const progress = Math.max(0, Math.min(1, (vh - rect.top) / vh));
-      const scale = 0.75 + (progress * 0.25);
-      const opacity = Math.min(1, progress * 1.8);
+      const center = rect.top + rect.height / 2;
+      // 0 when the element's center is at the bottom edge, 1 when it reaches the screen center
+      const progress = Math.max(0, Math.min(1, (vh - center) / (vh * 0.5)));
+      const scale = 0.6 + progress * 0.4;
+      const opacity = Math.min(1, progress * 2);
       el.style.transform = 'scale(' + scale + ')';
       el.style.opacity = opacity;
       el.style.transformOrigin = 'center center';
